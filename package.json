@@ -1,0 +1,72 @@
+{
+  "name": "markdown-folder-links",
+  "displayName": "Markdown Folder Links",
+  "description": "Open local folders and files directly from markdown links in VSCode",
+  "version": "1.0.0",
+  "publisher": "nautat",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "folder",
+    "file",
+    "links",
+    "finder",
+    "explorer"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nautat/markdown-folder-links"
+  },
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdownFolderLinks.openLink",
+        "title": "Open Folder/File Link"
+      }
+    ],
+    "configuration": {
+      "title": "Markdown Folder Links",
+      "properties": {
+        "markdownFolderLinks.enableHoverPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show folder path preview on hover"
+        },
+        "markdownFolderLinks.defaultAction": {
+          "type": "string",
+          "enum": [
+            "open",
+            "reveal"
+          ],
+          "default": "open",
+          "description": "Default action for folder:// links (open: opens folder, reveal: reveals in Finder/Explorer)"
+        }
+      }
+    },
+    "markdown.markdownItPlugins": true
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.74.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {}
+}
