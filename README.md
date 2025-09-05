@@ -8,10 +8,11 @@ A VSCode extension that makes local folder and file paths clickable in Markdown 
 - 📁 **Multiple protocols** for different actions:
   - `folder://` - Opens the folder/file in your system's file manager
   - `reveal://` - Reveals the folder/file in the file manager (shows in parent directory)
-  - `vscode://file/` - Opens the folder in VSCode
+  - `edit://` - Opens the path in VSCode, creating files if needed
+- 📝 **Wiki-style links** - Use `[[folder:path]]`, `[[reveal:path]]`, or `[[edit:path]]`
 - 🏠 **Path expansion** - Supports `~` for home directory and relative paths
 - 👁️ **Hover preview** - See if paths exist and get file/folder information
-- ⚠️ **Smart handling** - Prompts to create non-existent folders
+- ⚠️ **Smart handling** - Prompts to create missing folders and creates files for `edit://` links
 - 🖥️ **Cross-platform** - Works on macOS, Windows, and Linux
 
 ## Usage
@@ -23,7 +24,7 @@ Standard markdown link format:
 ```markdown
 [Open Documents](folder://~/Documents)
 [Reveal in Finder](reveal://~/Downloads/file.pdf)
-[Open in VSCode](vscode://file//Users/name/Projects/my-project)
+[Open in VSCode](edit://~/Projects/my-project)
 ```
 
 Wiki-style double brackets:
@@ -31,6 +32,7 @@ Wiki-style double brackets:
 ```markdown
 [[folder:~/Documents]]
 [[reveal:~/Downloads/file.pdf]]
+[[edit:~/Projects/my-app]]
 ```
 
 ### Path Formats
