@@ -1,5 +1,7 @@
 # Markdown Folder Links
 
+[![CI](https://github.com/nautat/markdown-folder-links/actions/workflows/ci.yml/badge.svg)](https://github.com/nautat/markdown-folder-links/actions/workflows/ci.yml)
+
 A VSCode extension that makes local folder and file paths clickable in Markdown files. Click to open folders in Finder (macOS), Explorer (Windows), or your default file manager (Linux).
 
 ## Features
@@ -101,6 +103,18 @@ npm run compile
 # Package extension
 npm install -g vsce
 vsce package
+```
+
+## Running Tests
+
+Automated tests run inside a VS Code Extension Host and verify activation, link provider behavior, and hover responses.
+
+```bash
+# Install dependencies
+npm install
+
+# Compile and run tests (first run downloads a VS Code build)
+npm test
 ```
 
 ## Platform-Specific Behavior
