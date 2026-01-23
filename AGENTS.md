@@ -30,6 +30,7 @@
   - `[Open](folder://~/Documents)` opens folder
   - `[Reveal](reveal://./README.md)` reveals item
   - `[Edit](edit://./notes/todo.md)` opens/creates in VS Code
+  - `[View](view://./README.md)` opens in preview mode (text) or system viewer (binary)
 - Cross-platform: Sanity check macOS/Windows/Linux behavior where possible.
 
 ## Continuous Integration
