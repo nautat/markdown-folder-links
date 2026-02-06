@@ -2,6 +2,15 @@
 
 All notable changes to the "markdown-folder-links" extension will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- Added support for `view://` protocol for read-only file viewing
+  - Opens text files in VSCode with preview mode
+  - Opens binary files (PDFs, images, videos, etc.) with system default viewer
+  - Shows error if file doesn't exist (doesn't create files like `edit://`)
+  - Supports both standard markdown syntax `[text](view://path)` and wiki-style `[[view:path]]`
+
 ## [1.0.0] - 2024-01-XX
 
 ### Initial Release

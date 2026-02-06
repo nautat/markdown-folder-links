@@ -11,7 +11,8 @@ A VSCode extension that makes local folder and file paths clickable in Markdown 
   - `folder://` - Opens the folder/file in your system's file manager
   - `reveal://` - Reveals the folder/file in the file manager (shows in parent directory)
   - `edit://` - Opens the path in VSCode, creating files if needed
-- 📝 **Wiki-style links** - Use `[[folder:path]]`, `[[reveal:path]]`, or `[[edit:path]]`
+  - `view://` - Opens files in read-only mode (VSCode for text, system viewer for PDFs/images)
+- 📝 **Wiki-style links** - Use `[[folder:path]]`, `[[reveal:path]]`, `[[edit:path]]`, or `[[view:path]]`
 - 🏠 **Path expansion** - Supports `~` for home directory and relative paths
 - 👁️ **Hover preview** - See if paths exist and get file/folder information
 - ⚠️ **Smart handling** - Prompts to create missing folders and creates files for `edit://` links
@@ -26,7 +27,8 @@ Standard markdown link format:
 ```markdown
 [Open Documents](folder://~/Documents)
 [Reveal in Finder](reveal://~/Downloads/file.pdf)
-[Open in VSCode](edit://~/Projects/my-project)
+[Edit in VSCode](edit://~/Projects/my-project)
+[View PDF](view://~/Documents/report.pdf)
 ```
 
 Wiki-style double brackets:
@@ -35,6 +37,7 @@ Wiki-style double brackets:
 [[folder:~/Documents]]
 [[reveal:~/Downloads/file.pdf]]
 [[edit:~/Projects/my-app]]
+[[view:~/Documents/report.pdf]]
 ```
 
 ### Path Formats
@@ -43,6 +46,20 @@ Wiki-style double brackets:
 - **Home directory**: `~/Documents`
 - **Relative paths**: `./subfolder` or `../parent-folder`
 - **URL encoded**: Spaces and special characters are automatically handled
+
+### Protocol Comparison
+
+| Protocol | Creates Files | Opens In | Use Case |
+|----------|--------------|----------|----------|
+| `edit://` | ✅ Yes | VSCode (editable) | Editing files, creating new files |
+| `view://` | ❌ No | VSCode (preview) or system viewer | Read-only viewing, PDFs, images |
+| `folder://` | N/A | File manager | Browsing folders |
+| `reveal://` | N/A | File manager (highlighted) | Locating specific files |
+
+**When to use `view://` vs `edit://`:**
+- Use `view://` for read-only content like PDFs, images, or when you want to preview without editing
+- Use `edit://` when you want to modify files or create them if they don't exist
+- Binary files (PDF, PNG, etc.) opened with `view://` use your system's default viewer
 
 ## Examples
 
@@ -55,12 +72,15 @@ Wiki-style double brackets:
 - [Documentation](reveal://./docs)
 - [Open Workspace in VSCode](edit://~/workspace)
 - [Edit config file](edit://~/Projects/config.json)
+- [View presentation](view://~/Documents/slides.pdf)
+- [View diagram](view://./assets/architecture.png)
 
 ## Quick Links
 
 - [[folder:~/Downloads]]
 - [[reveal:~/Desktop/important.pdf]]
 - [[edit:~/Projects/my-app]]
+- [[view:~/Documents/report.pdf]]
 ```
 
 ## Configuration

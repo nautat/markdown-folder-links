@@ -10,7 +10,7 @@ const fsAccess = promisify(fs.access);
 
 interface LinkPattern {
   pattern: RegExp;
-  action: "open" | "reveal" | "vscode";
+  action: "open" | "reveal" | "vscode" | "view";
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -51,10 +51,12 @@ class FolderLinkProvider implements vscode.DocumentLinkProvider {
     { pattern: /\[([^\]]+)\]\(folder:\/\/([^)]+)\)/g, action: "open" },
     { pattern: /\[([^\]]+)\]\(reveal:\/\/([^)]+)\)/g, action: "reveal" },
     { pattern: /\[([^\]]+)\]\(edit:\/\/([^)]+)\)/g, action: "vscode" },
+    { pattern: /\[([^\]]+)\]\(view:\/\/([^)]+)\)/g, action: "view" },
     // Wiki-style syntax
     { pattern: /\[\[folder:([^\]]+)\]\]/g, action: "open" },
     { pattern: /\[\[reveal:([^\]]+)\]\]/g, action: "reveal" },
     { pattern: /\[\[edit:([^\]]+)\]\]/g, action: "vscode" },
+    { pattern: /\[\[view:([^\]]+)\]\]/g, action: "view" },
   ];
 
   provideDocumentLinks(
@@ -88,6 +90,8 @@ class FolderLinkProvider implements vscode.DocumentLinkProvider {
             ? "Edit in VSCode"
             : linkPattern.action === "reveal"
             ? "Reveal"
+            : linkPattern.action === "view"
+            ? "View"
             : "Open";
         link.tooltip = `${actionLabel}: ${expandPath(linkPath)}`;
         links.push(link);
@@ -111,7 +115,7 @@ class FolderLinkHoverProvider implements vscode.HoverProvider {
 
     const range = document.getWordRangeAtPosition(
       position,
-      /\[([^\]]+)\]\((?:folder|reveal|edit):\/\/([^)]+)\)|\[\[(?:folder|reveal|edit):([^\]]+)\]\]/
+      /\[([^\]]+)\]\((?:folder|reveal|edit|view):\/\/([^)]+)\)|\[\[(?:folder|reveal|edit|view):([^\]]+)\]\]/
     );
     if (!range) {
       return undefined;
@@ -119,7 +123,7 @@ class FolderLinkHoverProvider implements vscode.HoverProvider {
 
     const text = document.getText(range);
     const pathMatch = text.match(
-      /(?:folder|reveal|edit):\/\/([^)]+)|(?:folder|reveal|edit):([^\]]+)/
+      /(?:folder|reveal|edit|view):\/\/([^)]+)|(?:folder|reveal|edit|view):([^\]]+)/
     );
     if (!pathMatch) {
       return undefined;
@@ -153,8 +157,8 @@ async function openPath(linkPath: string, action: string) {
   try {
     const expandedPath = expandPath(linkPath);
 
-    // Check if path exists (skip for vscode action as it has its own error handling)
-    if (action !== "vscode") {
+    // Check if path exists (skip for vscode and view actions as they have their own error handling)
+    if (action !== "vscode" && action !== "view") {
       try {
         await fsAccess(expandedPath);
       } catch {
@@ -212,6 +216,71 @@ async function openPath(linkPath: string, action: string) {
             );
           } catch (err) {
             vscode.window.showErrorMessage(`Unable to open: ${expandedPath}`);
+          }
+        }
+        break;
+
+      case "view":
+        // View file (read-only, no creation)
+        try {
+          const stats = await fs.promises.stat(expandedPath);
+
+          if (stats.isDirectory()) {
+            vscode.window.showWarningMessage(
+              `Cannot view directory: ${path.basename(expandedPath)}`
+            );
+            return;
+          }
+
+          // Check if it's a binary file by extension
+          const ext = path.extname(expandedPath).toLowerCase();
+          const binaryExtensions = [
+            '.pdf', '.png', '.jpg', '.jpeg', '.gif', '.bmp', '.svg', '.ico',
+            '.mp4', '.mp3', '.avi', '.mov', '.wav', '.flac',
+            '.zip', '.tar', '.gz', '.rar', '.7z',
+            '.exe', '.dll', '.so', '.dylib',
+            '.bin', '.dat', '.iso'
+          ];
+
+          if (binaryExtensions.includes(ext)) {
+            // Binary file: open with system default viewer
+            if (platform === "darwin") {
+              command = `open "${expandedPath}"`;
+            } else if (platform === "win32") {
+              command = `start "" "${expandedPath}"`;
+            } else {
+              command = `xdg-open "${expandedPath}"`;
+            }
+            await execAsync(command);
+            vscode.window.showInformationMessage(
+              `Opened with system viewer: ${path.basename(expandedPath)}`
+            );
+          } else {
+            // Text file: open in VSCode with preview and set read-only
+            const doc = await vscode.workspace.openTextDocument(expandedPath);
+            await vscode.window.showTextDocument(doc, { preview: true });
+            // Set the active editor to read-only (VS Code 1.79+)
+            try {
+              await vscode.commands.executeCommand(
+                'workbench.action.files.setActiveEditorReadonlyInSession'
+              );
+            } catch {
+              // Command not available in older VS Code versions; preview-only fallback
+            }
+            vscode.window.showInformationMessage(
+              `Viewing: ${path.basename(expandedPath)}`
+            );
+          }
+        } catch (error) {
+          // File doesn't exist or other error
+          if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+            vscode.window.showErrorMessage(
+              `File does not exist: ${expandedPath}`
+            );
+          } else {
+            vscode.window.showErrorMessage(
+              `Unable to view file: ${expandedPath}`
+            );
           }
         }
         break;
