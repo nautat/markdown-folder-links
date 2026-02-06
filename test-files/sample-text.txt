@@ -1,4 +1,0 @@
-This is a sample text file for testing the view:// protocol.
-
-It contains multiple lines of text.
-The view:// protocol should open this file in VSCode with preview mode.

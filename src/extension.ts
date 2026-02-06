@@ -256,9 +256,17 @@ async function openPath(linkPath: string, action: string) {
               `Opened with system viewer: ${path.basename(expandedPath)}`
             );
           } else {
-            // Text file: open in VSCode with preview
+            // Text file: open in VSCode with preview and set read-only
             const doc = await vscode.workspace.openTextDocument(expandedPath);
             await vscode.window.showTextDocument(doc, { preview: true });
+            // Set the active editor to read-only (VS Code 1.79+)
+            try {
+              await vscode.commands.executeCommand(
+                'workbench.action.files.setActiveEditorReadonlyInSession'
+              );
+            } catch {
+              // Command not available in older VS Code versions; preview-only fallback
+            }
             vscode.window.showInformationMessage(
               `Viewing: ${path.basename(expandedPath)}`
             );
