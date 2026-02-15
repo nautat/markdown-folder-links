@@ -2,7 +2,7 @@
 
 All notable changes to the "markdown-folder-links" extension will be documented in this file.
 
-## [Unreleased]
+## [1.1.0] - 2026-02-06
 
 ### Added
 - Added support for `view://` protocol for read-only file viewing

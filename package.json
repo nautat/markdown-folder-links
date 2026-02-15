@@ -2,7 +2,7 @@
   "name": "markdown-folder-links",
   "displayName": "Markdown Folder Links",
   "description": "Open local folders and files directly from markdown links in VSCode",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "nautat",
   "engines": {
     "vscode": "^1.74.0"
